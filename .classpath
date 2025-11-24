@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry excluding="biblioteca/modelo/|biblioteca/|biblioteca/dados/" kind="src" path="src"/>
+	<classpathentry excluding="modelo/|dados/" kind="src" path="src/biblioteca"/>
+	<classpathentry kind="src" path="src/biblioteca/dados"/>
+	<classpathentry kind="src" path="src/biblioteca/modelo"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

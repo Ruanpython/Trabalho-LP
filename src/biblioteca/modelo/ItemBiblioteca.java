@@ -1,0 +1,17 @@
+package biblioteca.modelo;
+
+public abstract class ItemBiblioteca {
+    protected String titulo;
+    protected boolean disponivel = true;
+
+    public ItemBiblioteca(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getTitulo() { return titulo; }
+    public boolean isDisponivel() { return disponivel; }
+    public void setDisponivel(boolean disponivel) { this.disponivel = disponivel; }
+
+    public abstract String getTipo();
+}
+
