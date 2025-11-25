@@ -1,4 +1,6 @@
 
+package biblioteca;
+
 import biblioteca.ui.TelaPrincipal;
 
 public class Main {

@@ -19,4 +19,3 @@ public class LeitorArquivo {
         return linhas;
     }
 }
-
