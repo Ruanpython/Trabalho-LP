@@ -1,8 +1,10 @@
 package biblioteca.ui;
 
-import biblioteca.modelo.*;
-import biblioteca.repositorio.*;
-import java.awt.*;
+import biblioteca.modelo.ItemBiblioteca;
+import biblioteca.modelo.Livro;
+import biblioteca.modelo.Revista;
+import biblioteca.repositorio.BibliotecaRepositorio;
+import java.awt.BorderLayout;
 import javax.swing.*;
 
 public class TelaPrincipal extends JFrame {
@@ -10,41 +12,83 @@ public class TelaPrincipal extends JFrame {
     private final JTextArea areaTexto;
 
     public TelaPrincipal() {
-        super("Sistema de Biblioteca");
+        super("Biblioteca");
         setLayout(new BorderLayout());
 
-        areaTexto = new JTextArea(10, 40);
-        JButton btnAdicionar = new JButton("Adicionar Livro");
-        JButton btnListar = new JButton("Listar Itens");
+        areaTexto = new JTextArea(12, 50);
+        JButton btnAddLivro = new JButton("Add Livro");
+        JButton btnAddRevista = new JButton("Add Revista");
+        JButton btnListar = new JButton("Listar");
+        JButton btnEmprestar = new JButton("Emprestar");
+        JButton btnDevolver = new JButton("Devolver");
 
-        JPanel painelBotoes = new JPanel();
-        painelBotoes.add(btnAdicionar);
-        painelBotoes.add(btnListar);
-
-        add(painelBotoes, BorderLayout.NORTH);
+        JPanel top = new JPanel();
+        top.add(btnAddLivro);
+        top.add(btnAddRevista);
+        top.add(btnListar);
+        top.add(btnEmprestar);
+        top.add(btnDevolver);
+        add(top, BorderLayout.NORTH);
         add(new JScrollPane(areaTexto), BorderLayout.CENTER);
 
-        btnAdicionar.addActionListener(e -> adicionarLivro());
-        btnListar.addActionListener(e -> listarItens());
+        btnAddLivro.addActionListener(e -> adicionarLivro());
+        btnAddRevista.addActionListener(e -> adicionarRevista());
+        btnListar.addActionListener(e -> listar());
+        btnEmprestar.addActionListener(e -> emprestar());
+        btnDevolver.addActionListener(e -> devolver());
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 
     private void adicionarLivro() {
-        String titulo = JOptionPane.showInputDialog("Título do livro:");
-        String autor = JOptionPane.showInputDialog("Autor do livro:");
-        repo.adicionarItem(new Livro(titulo, autor));
+        String titulo = JOptionPane.showInputDialog("Título livro");
+        if (titulo == null || titulo.isBlank()) return;
+        String autor = JOptionPane.showInputDialog("Autor");
+        if (autor == null || autor.isBlank()) return;
+        String paginasStr = JOptionPane.showInputDialog("Páginas (opcional)");
+        int pags = 0;
+        try { if (paginasStr != null && !paginasStr.isBlank()) pags = Integer.parseInt(paginasStr); } catch (NumberFormatException ignored) {}
+        repo.adicionarItem(new Livro(titulo, autor, pags));
     }
 
-    private void listarItens() {
-        StringBuilder sb = new StringBuilder();
-        for (ItemBiblioteca item : repo.listarItens()) {
-            sb.append(item.getTipo()).append(": ").append(item.getTitulo())
-              .append(" - ").append(item.isDisponivel() ? "Disponível" : "Emprestado")
-              .append("\n");
+    private void adicionarRevista() {
+        String titulo = JOptionPane.showInputDialog("Título revista");
+        if (titulo == null || titulo.isBlank()) return;
+        String edicaoStr = JOptionPane.showInputDialog("Edição");
+        String anoStr = JOptionPane.showInputDialog("Ano");
+        String tag = JOptionPane.showInputDialog("Palavra-chave (opcional)");
+        int ed = 1, ano = 0;
+        try { if (edicaoStr != null && !edicaoStr.isBlank()) ed = Integer.parseInt(edicaoStr); } catch (NumberFormatException ignored) {}
+        try { if (anoStr != null && !anoStr.isBlank()) ano = Integer.parseInt(anoStr); } catch (NumberFormatException ignored) {}
+        repo.adicionarItem(new Revista(titulo, ed, ano, tag));
+    }
+
+    private void emprestar() {
+        String titulo = JOptionPane.showInputDialog("Título para emprestar");
+        if (titulo == null || titulo.isBlank()) return;
+        try {
+            repo.emprestarItem(titulo);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         }
+    }
+
+    private void devolver() {
+        String titulo = JOptionPane.showInputDialog("Título para devolver");
+        if (titulo == null || titulo.isBlank()) return;
+        try {
+            repo.devolverItem(titulo);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+    }
+
+    private void listar() {
+        StringBuilder sb = new StringBuilder();
+        for (ItemBiblioteca i : repo.listarItens()) sb.append(i).append('\n');
         areaTexto.setText(sb.toString());
     }
 }
